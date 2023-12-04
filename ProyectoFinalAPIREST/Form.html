@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulario para Equipos</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    
+</head>
+
+<body>
+    <div class="container mt-5">
+        <h2 class="mb-4">Equipos LEC 2023</h2>
+
+        <div class="row">
+            <div class="col-md-6">
+                <form id="idForm">
+                    <div class="form-group">
+                        <label for="idEquipo">ID del Equipo:</label>
+                        <input id="idEquipo" type="text" class="form-control" name="idEquipo">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="nombre">Nombre:</label>
+                        <input id="nombre" type="text" class="form-control" name="nombre">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="acronimo">Acrónimo:</label>
+                        <input id="acronimo" type="text" class="form-control" name="acronimo">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="pais">País:</label>
+                        <input id="pais" type="text" class="form-control" name="pais">
+                    </div>
+
+                    <button type="button" class="btn btn-primary" onclick="getAllEquipos()">Obtener Todos los
+                        Equipos</button>
+                    <button type="button" class="btn btn-success" onclick="addEquipo()">Agregar Equipo</button>
+                    <button type="button" class="btn btn-danger" onclick="deleteEquipo()">Eliminar Equipo</button>
+                    <button type="button" class="btn btn-warning" onclick="updateEquipo()">Actualizar Equipo</button>
+                    <button type="button" class="btn btn-info" onclick="partialUpdateEquipo()">Actualizar Parcialmente
+                        Equipo</button>
+                    <button type="button" class="btn btn-secondary" onclick="getEquipoById()">Obtener Equipo por
+                        ID</button>
+                </form>
+            </div>
+
+            <div class="col-md-6">
+                <div class="mt-4">
+                    <h3>Lista de Equipos</h3>
+                    <table class="table" id="equiposTable">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nombre</th>
+                                <th>Acrónimo</th>
+                                <th>País</th>
+                            </tr>
+                        </thead>
+                        <tbody id="equiposGrid">
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        const apiUrl = 'http://localhost:8080/lec2023';
+
+        function sendRequest(method, url, data = null) {
+            const options = {
+                method: method,
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                mode: 'cors',
+                body: data ? JSON.stringify(data) : null
+            };
+
+            return fetch(url, options)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`Error en la solicitud: ${response.status} - ${response.statusText}`);
+                    }
+                    return response.json();
+                })
+                .catch(error => console.error('Error:', error.message));
+        }
+
+        function getAllEquipos() {
+            sendRequest('GET', apiUrl)
+                .then(data => displayEquipos(data));
+        }
+
+        function addEquipo() {
+            const nombre = document.getElementById('nombre').value;
+            const acronimo = document.getElementById('acronimo').value;
+            const pais = document.getElementById('pais').value;
+
+            const data = {
+                nombre: nombre,
+                acronimo: acronimo,
+                pais: pais
+            };
+
+            sendRequest('POST', apiUrl, data)
+                .then(() => getAllEquipos());
+        }
+
+        function deleteEquipo() {
+            const idEquipo = document.getElementById('idEquipo').value;
+            if (!idEquipo) {
+                alert('Por favor, ingrese un ID de equipo válido.');
+                return;
+            }
+
+            sendRequest('DELETE', `${apiUrl}/${idEquipo}`)
+                .then(() => getAllEquipos());
+        }
+
+        function updateEquipo() {
+            const idEquipo = document.getElementById('idEquipo').value;
+            const nombre = document.getElementById('nombre').value;
+            const acronimo = document.getElementById('acronimo').value;
+            const pais = document.getElementById('pais').value;
+
+            const data = {
+                nombre: nombre,
+                acronimo: acronimo,
+                pais: pais
+            };
+
+            sendRequest('PUT', `${apiUrl}/${idEquipo}`, data)
+                .then(() => getAllEquipos());
+        }
+
+        function partialUpdateEquipo() {
+            const idEquipo = document.getElementById('idEquipo').value;
+            const nombre = document.getElementById('nombre').value;
+            const acronimo = document.getElementById('acronimo').value;
+            const pais = document.getElementById('pais').value;
+
+            const data = {};
+
+            if (nombre) data.nombre = nombre;
+            if (acronimo) data.acronimo = acronimo;
+            if (pais) data.pais = pais;
+
+            sendRequest('PATCH', `${apiUrl}/${idEquipo}`, data)
+                .then(() => getAllEquipos());
+        }
+
+        function getEquipoById() {
+            const idEquipo = document.getElementById('idEquipo').value;
+
+            if (!idEquipo) {
+                alert('Por favor, ingrese un ID de equipo válido.');
+                return;
+            }
+
+            sendRequest('GET', `${apiUrl}/${idEquipo}`)
+                .then(data => {
+                    // Verificar si el equipo existe antes de mostrarlo en el grid
+                    if (data && data.length > 0) {
+                        displayEquipos(data);
+                    } else {
+                        alert('Equipo no encontrado.');
+                    }
+                })
+                .catch(error => console.error('Error:', error.message));
+        }
+
+        function displayEquipos(equipos) {
+            const equiposGrid = document.getElementById('equiposGrid');
+            equiposGrid.innerHTML = '';
+
+            equipos.forEach(equipo => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+            <td>${equipo.id}</td>
+            <td>${equipo.nombre}</td>
+            <td>${equipo.acronimo}</td>
+            <td>${equipo.pais}</td>`;
+                equiposGrid.appendChild(row);
+            });
+        }
+    </script>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+</body>
+
+</html>
