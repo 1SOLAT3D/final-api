@@ -1,0 +1,28 @@
+# .railway/railway.yml
+
+# Nombre de la aplicación
+name: final-api
+
+# Servicios
+services:
+  # Servicio de la aplicación web
+  - name: web
+    # Tipo de servicio (puede ser 'web', 'worker', 'scheduled', etc.)
+    type: web
+    # Comando de inicio para tu aplicación
+    command: npm start
+    # Variables de entorno
+    env:
+      NODE_ENV: production
+      PORT: 3000
+
+  # Servicio de base de datos MySQL
+  - name: mysql
+    type: mysql
+    # Variables de entorno para la base de datos MySQL
+    env:
+      MYSQL_HOST: railway
+      MYSQL_USER: root
+      MYSQL_PASSWORD: bh6224Hab62EGG4d6fFCCDc1Cgg4-cf6
+      MYSQL_DATABASE: railway
+      MYSQL_PORT: 26393
