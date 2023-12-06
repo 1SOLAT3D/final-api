@@ -31,7 +31,7 @@ const swaggerOptions = {
     servers: [
       {
         url: 'https://final-api-production.up.railway.app',
-        description: 'Servidor Local para API REST',
+        description: 'Servidor en Railway para API LEC 2023',
       },
     ],
   },
