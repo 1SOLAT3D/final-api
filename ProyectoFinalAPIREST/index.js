@@ -8,7 +8,6 @@ const morgan = require('morgan');
 const redoc = require('redoc-express');
 const rte = require('./routes/lec2023');
 const OpenApiSnippet = require('openapi-snippet');
-
 const app = express();
 
 app.use(express.json());
