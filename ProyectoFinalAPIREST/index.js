@@ -13,6 +13,8 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
+const PORT = process.env.PORT;
+
 var accessLogStream = fs.createWriteStream(path.join(__dirname, 'access.log'), { flags: 'a' });
 app.use(morgan('combined', { stream: accessLogStream }));
 
@@ -85,6 +87,6 @@ app.use('/lec2023', rte.router);
 
 app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerSpec, { explorer: true }));
 
-app.listen(8080, () => {
-  console.log('Servidor Express escuchando en el puerto 8080');
+app.listen(PORT, () => {
+  console.log('Servidor Express escuchando en el puerto ' +PORT);
 });
