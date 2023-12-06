@@ -42,7 +42,7 @@ const swaggerSpec = swaggerJsDoc(swaggerOptions);
 
 app.use('/redoc', redoc({
   title: 'API LEC 2023',
-  specUrl: openApiUrl,
+  specUrl: 'https://final-api-production.up.railway.app',
 }));
 
 app.get(
