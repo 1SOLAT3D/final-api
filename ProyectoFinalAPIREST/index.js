@@ -18,7 +18,7 @@ const PORT = process.env.PORT || 8080;
 var accessLogStream = fs.createWriteStream(path.join(__dirname, 'access.log'), { flags: 'a' });
 app.use(morgan('combined', { stream: accessLogStream }));
 
-const openApiUrl = 'http://localhost:8080/api-docs-json';
+const openApiUrl = 'https://final-api-production.up.railway.app/api-docs-json';
 
 const swaggerOptions = {
   definition: {
@@ -42,7 +42,7 @@ const swaggerSpec = swaggerJsDoc(swaggerOptions);
 
 app.use('/redoc', redoc({
   title: 'API LEC 2023',
-  specUrl: 'https://final-api-production.up.railway.app',
+  specUrl: openApiUrl,
 }));
 
 app.get(
