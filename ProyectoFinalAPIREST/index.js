@@ -29,7 +29,7 @@ const swaggerOptions = {
     },
     servers: [
       {
-        url: 'http://localhost:8080/api-docs-json',
+        url: 'http://localhost:8080/',
         description: 'Servidor Local para API REST',
       },
     ],

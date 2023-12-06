@@ -4,11 +4,10 @@ const mysql = require("mysql2/promise");
 const router = express.Router();
 
 const dbConfig = {
-  host: process.env.MYSQLHOST || "localhost",
-  user: process.env.MYSQLUSER || "root",
-  password: process.env.MYSQLPASSWORD || "",
-  database: process.env.MYSQLDATABASE || "lec2023",
-  port: process.env.MYSQLPORT || 3306,
+  host: 'localhost',
+  user: 'root',
+  password: '',
+  database: 'lec2023'
 };
 
 async function getDatabaseConnection() {
