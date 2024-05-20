@@ -22,6 +22,31 @@ async function getDatabaseConnection() {
  * 
  */
 
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     Equipo:
+ *       type: object
+ *       properties:
+ *         id:
+ *           type: integer
+ *           description: ID del equipo
+ *           example: 1
+ *         nombre:
+ *           type: string
+ *           description: Nombre del equipo
+ *           example: "G2 Esports"
+ *         acronimo:
+ *           type: string
+ *           description: Acrónimo del equipo
+ *           example: "G2"
+ *         pais:
+ *           type: string
+ *           description: País del equipo
+ *           example: "Alemania"
+ */
+
 function validarIdEquipo(req, res, next) {
   const idEquipo = req.params.idEquipo;
   if (!idEquipo || isNaN(idEquipo)) {
