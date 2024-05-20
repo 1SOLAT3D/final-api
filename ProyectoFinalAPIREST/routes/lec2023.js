@@ -1,6 +1,5 @@
 const express = require("express");
 const mysql = require("mysql2/promise");
-
 const router = express.Router();
 
 const dbConfig = {
@@ -40,6 +39,12 @@ function validarIdEquipo(req, res, next) {
  *     responses:
  *       200:
  *         description: Retorna la lista de equipos.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Equipo'
  *       500:
  *         description: Error en el servidor.
  */
@@ -69,6 +74,10 @@ router.get('/', async (req, res) => {
  *     responses:
  *       200:
  *         description: Retorna el equipo solicitado.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Equipo'
  *       404:
  *         description: El equipo no fue encontrado.
  */
@@ -92,28 +101,6 @@ router.get('/:idEquipo', validarIdEquipo, async (req, res) => {
 /**
  * @swagger
  * /lec2023:
- *   get:
- *     summary: Obtiene todos los equipos.
- *     tags: [Equipos]
- *     responses:
- *       200:
- *         description: Retorna la lista de equipos.
- *       500:
- *         description: Error en el servidor.
- */
-router.get('/', async (req, res) => {
-  try {
-    const connection = await getDatabaseConnection();
-    const [results, fields] = await connection.execute('SELECT * FROM equipo');
-    res.json(results);
-  } catch (error) {
-    res.status(500).json({ error: 'Error en el servidor' });
-  }
-});
-
-/**
- * @swagger
- * /lec2023:
  *   post:
  *     summary: Crea un nuevo equipo.
  *     tags: [Equipos]
@@ -128,12 +115,15 @@ router.get('/', async (req, res) => {
  *               nombre:
  *                 type: string
  *                 description: Nombre del equipo.
+ *                 example: "G2 Esports"
  *               acronimo:
  *                 type: string
  *                 description: Acrónimo del equipo.
+ *                 example: "G2"
  *               pais:
  *                 type: string
  *                 description: País del equipo.
+ *                 example: "Alemania"
  *     responses:
  *       200:
  *         description: Equipo creado exitosamente.
@@ -222,12 +212,15 @@ router.delete('/:idEquipo', validarIdEquipo, async (req, res) => {
  *               nombre:
  *                 type: string
  *                 description: Nuevo nombre del equipo.
+ *                 example: "Nuevo nombre"
  *               acronimo:
  *                 type: string
  *                 description: Nuevo acrónimo del equipo.
+ *                 example: "NN"
  *               pais:
  *                 type: string
  *                 description: Nuevo país del equipo.
+ *                 example: "Nuevo país"
  *     responses:
  *       200:
  *         description: Equipo actualizado exitosamente.
@@ -287,12 +280,15 @@ router.put('/:idEquipo', validarIdEquipo, async (req, res) => {
  *               nombre:
  *                 type: string
  *                 description: Nuevo nombre del equipo (opcional).
+ *                 example: "Nuevo nombre"
  *               acronimo:
  *                 type: string
  *                 description: Nuevo acrónimo del equipo (opcional).
+ *                 example: "NN"
  *               pais:
  *                 type: string
  *                 description: Nuevo país del equipo (opcional).
+ *                 example: "Nuevo país"
  *     responses:
  *       200:
  *         description: Equipo actualizado parcialmente exitosamente.
