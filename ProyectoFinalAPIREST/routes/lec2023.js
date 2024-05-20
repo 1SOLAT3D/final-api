@@ -3,24 +3,16 @@ const mysql = require("mysql2/promise");
 const router = express.Router();
 
 const dbConfig = {
-  host: process.env.DB_HOST || 'localhost' , 
-    user: process.env.DB_USER || 'root' ,
-    password: process.env.DB_PASSWORD || '',
-    database: process.env.DB_DATABASE || 'lec2023',
-    port: process.env.DB_PORT || 3306
+  host: process.env.DB_HOST || 'localhost', 
+  user: process.env.DB_USER || 'root',
+  password: process.env.DB_PASSWORD || '',
+  database: process.env.DB_DATABASE || 'lec2023',
+  port: process.env.DB_PORT || 3306
 };
 
 async function getDatabaseConnection() {
   return await mysql.createConnection(dbConfig);
 }
-
-/**
- * @swagger
- * tags:
- *   name: Equipos
- *   description: Operaciones relacionadas con equipos.
- * 
- */
 
 /**
  * @swagger
@@ -45,6 +37,13 @@ async function getDatabaseConnection() {
  *           type: string
  *           description: País del equipo
  *           example: "Alemania"
+ */
+
+/**
+ * @swagger
+ * tags:
+ *   name: Equipos
+ *   description: Operaciones relacionadas con equipos.
  */
 
 function validarIdEquipo(req, res, next) {
@@ -135,20 +134,7 @@ router.get('/:idEquipo', validarIdEquipo, async (req, res) => {
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             properties:
- *               nombre:
- *                 type: string
- *                 description: Nombre del equipo.
- *                 example: "G2 Esports"
- *               acronimo:
- *                 type: string
- *                 description: Acrónimo del equipo.
- *                 example: "G2"
- *               pais:
- *                 type: string
- *                 description: País del equipo.
- *                 example: "Alemania"
+ *             $ref: '#/components/schemas/Equipo'
  *     responses:
  *       200:
  *         description: Equipo creado exitosamente.
@@ -232,20 +218,7 @@ router.delete('/:idEquipo', validarIdEquipo, async (req, res) => {
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             properties:
- *               nombre:
- *                 type: string
- *                 description: Nuevo nombre del equipo.
- *                 example: "Nuevo nombre"
- *               acronimo:
- *                 type: string
- *                 description: Nuevo acrónimo del equipo.
- *                 example: "NN"
- *               pais:
- *                 type: string
- *                 description: Nuevo país del equipo.
- *                 example: "Nuevo país"
+ *             $ref: '#/components/schemas/Equipo'
  *     responses:
  *       200:
  *         description: Equipo actualizado exitosamente.
@@ -300,20 +273,7 @@ router.put('/:idEquipo', validarIdEquipo, async (req, res) => {
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             properties:
- *               nombre:
- *                 type: string
- *                 description: Nuevo nombre del equipo (opcional).
- *                 example: "Nuevo nombre"
- *               acronimo:
- *                 type: string
- *                 description: Nuevo acrónimo del equipo (opcional).
- *                 example: "NN"
- *               pais:
- *                 type: string
- *                 description: Nuevo país del equipo (opcional).
- *                 example: "Nuevo país"
+ *             $ref: '#/components/schemas/Equipo'
  *     responses:
  *       200:
  *         description: Equipo actualizado parcialmente exitosamente.
