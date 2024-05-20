@@ -69,7 +69,7 @@ const swaggerOptions = {
       }
     ]
   },
-  apis: ['./index.js'], // or the appropriate file where your routes are defined
+  apis: ['./lec2023.js'], // or the appropriate file where your routes are defined
 };
 
 const swaggerDocs = swaggerJsdoc(swaggerOptions);
