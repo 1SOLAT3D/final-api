@@ -1,81 +1,27 @@
 const express = require("express");
 const mysql = require("mysql2/promise");
-const swaggerUi = require('swagger-ui-express');
-const swaggerJsdoc = require('swagger-jsdoc');
 
-const app = express();
 const router = express.Router();
 
 const dbConfig = {
-  host: process.env.DB_HOST || 'localhost',
-  user: process.env.DB_USER || 'root',
-  password: process.env.DB_PASSWORD || '',
-  database: process.env.DB_DATABASE || 'lec2023',
-  port: process.env.DB_PORT || 3306
+  host: process.env.DB_HOST || 'localhost' , 
+    user: process.env.DB_USER || 'root' ,
+    password: process.env.DB_PASSWORD || '',
+    database: process.env.DB_DATABASE || 'lec2023',
+    port: process.env.DB_PORT || 3306
 };
 
 async function getDatabaseConnection() {
   return await mysql.createConnection(dbConfig);
 }
 
-// Swagger configuration
-const swaggerOptions = {
-  swaggerDefinition: {
-    openapi: '3.0.0',
-    info: {
-      title: 'API LEC 2023',
-      version: '1.0.0',
-      description: 'API para el League Of Legends EMEA Championship 2023',
-    },
-    servers: [
-      {
-        url: 'https://final-api-production.up.railway.app',
-        description: 'Servidor en Railway para API LEC 2023'
-      }
-    ],
-    components: {
-      schemas: {
-        Equipo: {
-          type: 'object',
-          properties: {
-            id: {
-              type: 'integer',
-              description: 'ID del equipo',
-              example: 1
-            },
-            nombre: {
-              type: 'string',
-              description: 'Nombre del equipo',
-              example: 'G2 Esports'
-            },
-            acronimo: {
-              type: 'string',
-              description: 'Acrónimo del equipo',
-              example: 'G2'
-            },
-            pais: {
-              type: 'string',
-              description: 'País del equipo',
-              example: 'España'
-            }
-          }
-        }
-      }
-    },
-    tags: [
-      {
-        name: 'Equipos',
-        description: 'Operaciones relacionadas con equipos'
-      }
-    ]
-  },
-  apis: ['./lec2023.js'], // or the appropriate file where your routes are defined
-};
-
-const swaggerDocs = swaggerJsdoc(swaggerOptions);
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
-
-app.use(express.json());
+/**
+ * @swagger
+ * tags:
+ *   name: Equipos
+ *   description: Operaciones relacionadas con equipos.
+ * 
+ */
 
 function validarIdEquipo(req, res, next) {
   const idEquipo = req.params.idEquipo;
@@ -87,13 +33,6 @@ function validarIdEquipo(req, res, next) {
 
 /**
  * @swagger
- * tags:
- *   - name: Equipos
- *     description: Operaciones relacionadas con equipos.
- */
-
-/**
- * @swagger
  * /lec2023:
  *   get:
  *     summary: Obtiene todos los equipos.
@@ -101,16 +40,10 @@ function validarIdEquipo(req, res, next) {
  *     responses:
  *       200:
  *         description: Retorna la lista de equipos.
- *         content:
- *           application/json:
- *             schema:
- *               type: array
- *               items:
- *                 $ref: '#/components/schemas/Equipo'
  *       500:
  *         description: Error en el servidor.
  */
-router.get('/lec2023', async (req, res) => {
+router.get('/', async (req, res) => {
   try {
     const connection = await getDatabaseConnection();
     const [results, fields] = await connection.execute('SELECT * FROM equipo');
@@ -136,14 +69,10 @@ router.get('/lec2023', async (req, res) => {
  *     responses:
  *       200:
  *         description: Retorna el equipo solicitado.
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Equipo'
  *       404:
  *         description: El equipo no fue encontrado.
  */
-router.get('/lec2023/:idEquipo', validarIdEquipo, async (req, res) => {
+router.get('/:idEquipo', validarIdEquipo, async (req, res) => {
   try {
     const connection = await getDatabaseConnection();
     const [results, fields] = await connection.execute('SELECT * FROM equipo WHERE id = ?', [req.params.idEquipo]);
@@ -163,6 +92,28 @@ router.get('/lec2023/:idEquipo', validarIdEquipo, async (req, res) => {
 /**
  * @swagger
  * /lec2023:
+ *   get:
+ *     summary: Obtiene todos los equipos.
+ *     tags: [Equipos]
+ *     responses:
+ *       200:
+ *         description: Retorna la lista de equipos.
+ *       500:
+ *         description: Error en el servidor.
+ */
+router.get('/', async (req, res) => {
+  try {
+    const connection = await getDatabaseConnection();
+    const [results, fields] = await connection.execute('SELECT * FROM equipo');
+    res.json(results);
+  } catch (error) {
+    res.status(500).json({ error: 'Error en el servidor' });
+  }
+});
+
+/**
+ * @swagger
+ * /lec2023:
  *   post:
  *     summary: Crea un nuevo equipo.
  *     tags: [Equipos]
@@ -172,7 +123,17 @@ router.get('/lec2023/:idEquipo', validarIdEquipo, async (req, res) => {
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/Equipo'
+ *             type: object
+ *             properties:
+ *               nombre:
+ *                 type: string
+ *                 description: Nombre del equipo.
+ *               acronimo:
+ *                 type: string
+ *                 description: Acrónimo del equipo.
+ *               pais:
+ *                 type: string
+ *                 description: País del equipo.
  *     responses:
  *       200:
  *         description: Equipo creado exitosamente.
@@ -181,7 +142,7 @@ router.get('/lec2023/:idEquipo', validarIdEquipo, async (req, res) => {
  *       500:
  *         description: Error en el servidor.
  */
-router.post('/lec2023', async (req, res) => {
+router.post('/', async (req, res) => {
   try {
     const { nombre, acronimo, pais } = req.body;
     if (!nombre || !acronimo || !pais) {
@@ -218,7 +179,7 @@ router.post('/lec2023', async (req, res) => {
  *       500:
  *         description: Error en el servidor.
  */
-router.delete('/lec2023/:idEquipo', validarIdEquipo, async (req, res) => {
+router.delete('/:idEquipo', validarIdEquipo, async (req, res) => {
   try {
     const connection = await getDatabaseConnection();
     const [results, fields] = await connection.execute(`DELETE FROM equipo WHERE id = ?`, [req.params.idEquipo]);
@@ -256,7 +217,17 @@ router.delete('/lec2023/:idEquipo', validarIdEquipo, async (req, res) => {
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/Equipo'
+ *             type: object
+ *             properties:
+ *               nombre:
+ *                 type: string
+ *                 description: Nuevo nombre del equipo.
+ *               acronimo:
+ *                 type: string
+ *                 description: Nuevo acrónimo del equipo.
+ *               pais:
+ *                 type: string
+ *                 description: Nuevo país del equipo.
  *     responses:
  *       200:
  *         description: Equipo actualizado exitosamente.
@@ -267,7 +238,7 @@ router.delete('/lec2023/:idEquipo', validarIdEquipo, async (req, res) => {
  *       500:
  *         description: Error en el servidor.
  */
-router.put('/lec2023/:idEquipo', validarIdEquipo, async (req, res) => {
+router.put('/:idEquipo', validarIdEquipo, async (req, res) => {
   try {
     const { nombre, acronimo, pais } = req.body;
     if (!nombre || !acronimo || !pais) {
@@ -311,7 +282,17 @@ router.put('/lec2023/:idEquipo', validarIdEquipo, async (req, res) => {
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/Equipo'
+ *             type: object
+ *             properties:
+ *               nombre:
+ *                 type: string
+ *                 description: Nuevo nombre del equipo (opcional).
+ *               acronimo:
+ *                 type: string
+ *                 description: Nuevo acrónimo del equipo (opcional).
+ *               pais:
+ *                 type: string
+ *                 description: Nuevo país del equipo (opcional).
  *     responses:
  *       200:
  *         description: Equipo actualizado parcialmente exitosamente.
@@ -322,7 +303,7 @@ router.put('/lec2023/:idEquipo', validarIdEquipo, async (req, res) => {
  *       500:
  *         description: Error en el servidor.
  */
-router.patch('/lec2023/:idEquipo', validarIdEquipo, async (req, res) => {
+router.patch('/:idEquipo', validarIdEquipo, async (req, res) => {
   try {
     const { nombre, acronimo, pais } = req.body;
 
@@ -366,13 +347,6 @@ router.patch('/lec2023/:idEquipo', validarIdEquipo, async (req, res) => {
   } catch (error) {
     res.status(500).json({ error: 'Error en el servidor' });
   }
-});
-
-app.use('/api', router);
-
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
 });
 
 module.exports = { router, validarIdEquipo };
