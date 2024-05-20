@@ -42,8 +42,14 @@ async function getDatabaseConnection() {
 /**
  * @swagger
  * tags:
- *   name: Equipos
- *   description: Operaciones relacionadas con equipos.
+ *  - name: Consultar
+ *    description: Operaciones de consulta de Equipos.
+ *  - name: Agregar
+ *    description: Operacion para agregar Equipo.
+ *  - name: Editar
+ *    description: Operaciones de edición de Equipos.
+ *  - name: Eliminar
+ *    description: Operacion para eliminar un Equipo.
  */
 
 function validarIdEquipo(req, res, next) {
@@ -59,7 +65,7 @@ function validarIdEquipo(req, res, next) {
  * /lec2023:
  *   get:
  *     summary: Obtiene todos los equipos.
- *     tags: [Equipos]
+ *     tags: [Consultar]
  *     responses:
  *       200:
  *         description: Retorna la lista de equipos.
@@ -87,7 +93,7 @@ router.get('/', async (req, res) => {
  * /lec2023/{idEquipo}:
  *   get:
  *     summary: Obtiene un equipo por su ID.
- *     tags: [Equipos]
+ *     tags: [Consultar]
  *     parameters:
  *       - in: path
  *         name: idEquipo
@@ -127,7 +133,7 @@ router.get('/:idEquipo', validarIdEquipo, async (req, res) => {
  * /lec2023:
  *   post:
  *     summary: Crea un nuevo equipo.
- *     tags: [Equipos]
+ *     tags: [Agregar]
  *     requestBody:
  *       description: Datos del equipo a crear.
  *       required: true
@@ -164,7 +170,7 @@ router.post('/', async (req, res) => {
  * /lec2023/{idEquipo}:
  *   delete:
  *     summary: Elimina un equipo por su ID.
- *     tags: [Equipos]
+ *     tags: [Eliminar]
  *     parameters:
  *       - in: path
  *         name: idEquipo
@@ -204,7 +210,7 @@ router.delete('/:idEquipo', validarIdEquipo, async (req, res) => {
  * /lec2023/{idEquipo}:
  *   put:
  *     summary: Actualiza un equipo por su ID.
- *     tags: [Equipos]
+ *     tags: [Editar]
  *     parameters:
  *       - in: path
  *         name: idEquipo
@@ -259,7 +265,7 @@ router.put('/:idEquipo', validarIdEquipo, async (req, res) => {
  * /lec2023/{idEquipo}:
  *   patch:
  *     summary: Actualiza parcialmente un equipo por su ID.
- *     tags: [Equipos]
+ *     tags: [Editar]
  *     parameters:
  *       - in: path
  *         name: idEquipo
